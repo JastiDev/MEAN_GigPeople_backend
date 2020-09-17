@@ -38,32 +38,37 @@ router.post(
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
 
-    console.log(req.body.task);
-    console.log(req.userData);
-    console.log(req.file.filename);
+    const taskData = JSON.parse(req.body.taskData);
+    delete taskData._id;
+    taskData.filePath = url + "/userfiles/" + req.file.filename;
+    taskData.creatorId = req.userData.userId;
+    
+    const task = new Task(taskData);
 
-    res.status(200).json({message: "OK"});
-    // const task = new Task({
-      
-    // });
-
-    // const post = new Post({
-    //   title: req.body.title,
-    //   content: req.body.content,
-    //   imagePath: url + "/images/" + req.file.filename,
-    //   creator: req.userData.userId
-    // });
-    // post.save().then(createdPost => {
-    //   res.status(201).json({
-    //     message: "Post added successfully",
-    //     post: {
-    //       ...createdPost,
-    //       id: createdPost._id
-    //     }
-    //   });
-    // });
+    task.save().then(createdTask => {
+      res.status(201).json({task: createdTask});
+    });
 
   }
 );
+
+router.get("/:id", (req, res, next) => {
+  Task.findById(req.params.id).then(task => {
+    if (task) {
+      res.status(200).json(task);
+    } else {
+      res.status(404).json({ message: "Post not found!" });
+    }
+  });
+});
+
+router.post("/readbyfilter", (req, res, next) => { 
+  Task.find().then(tasks => {
+    res.status(200).json(tasks);
+  }).catch(err => { 
+    console.log(err);
+    res.status(500).json({ message: "Server Internel Error!" });
+  });
+});
 
 module.exports = router;
