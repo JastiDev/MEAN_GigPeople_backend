@@ -12,7 +12,13 @@ const app = express();
 
 mongoose
   .connect(
-    "mongodb+srv://1:1@cluster0.w2xig.mongodb.net/gigpeople?retryWrites=true&w=majority"
+    "mongodb+srv://1:1@cluster0.w2xig.mongodb.net/gigpeople?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    }
   )
   .then(() => {
     console.log("Connected to database!");

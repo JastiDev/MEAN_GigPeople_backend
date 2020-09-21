@@ -1,24 +1,30 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+var mongoose = require("mongoose");
+var Schema = mongoose.Schema;
 
-const userSchema = mongoose.Schema({
+var User = new Schema({
+  createdAt: { type: Date, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  nationId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Nation" },
-  workerProfile: mongoose.Schema({
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    skillIds: [mongoose.Schema({
-      skillId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Skill" }
-    })]
-  }),
-  employerProfile: mongoose.Schema({
+  country: { type: String, required: true },
+  refWorkerProfile: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "WorkerProfile",
+  },
+  refEmployerProfile: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "EmployerProfile",
+  },
+  refFinancialProfile: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "FinancialProfile",
+  },
+}); 
 
-  }),
-});
+User.plugin(require("mongoose-unique-validator"));
 
-userSchema.plugin(uniqueValidator);
-
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", User);

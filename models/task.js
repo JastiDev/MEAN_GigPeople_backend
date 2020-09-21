@@ -1,26 +1,18 @@
-const mongoose = require('mongoose');
+var mongoose = require("mongoose");
+var Schema = mongoose.Schema;
 
-const taskSchema = mongoose.Schema({
-  creatorId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
+var Task = new Schema({
+  refCreator: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+  refCategory: { type: Schema.Types.ObjectId, required: true, ref: "Category" },
   title: { type: String, required: true },
   description: { type: String, required: true },
-  filePath: { type: String, required: true, default: "" },
-  categoryId: {type: String, required: true, default: "0" },
-  // categoryId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Category" },
-  location: { type: String, required: true, default: "*" },
+  filePath: { type: String, required: true },
+  country: { type: String, required: true },
   minBudget: { type: Number, required: true },
   maxBudget: { type: Number, required: true },
-  skillIds: [mongoose.Schema({
-    skillId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Skill" }
-  })],
-  isHourly: { type: Boolean, required: true, default: false },
-  bidIds: [mongoose.Schema({
-    bidId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Bid" }
-  })],
-  status: { type: Number, required: true, default: 0 },
-  chatIds: [mongoose.Schema({
-    chatId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Chat" }
-  })]
-});
-
-module.exports = mongoose.model("Task", taskSchema);
+  isHourly: { type: Boolean, required: true },
+  refBids: [{ type: Schema.Types.ObjectId, required: true, ref: "Bid" }],
+  status: { type: Number, required: true },
+  timestamp: { type: Date, required: true },
+}); 
+module.exports = mongoose.model("Task", Task);
