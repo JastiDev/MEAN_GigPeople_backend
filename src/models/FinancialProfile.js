@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
-var WorkerReview = new Schema({
+var FinancialProfile = new Schema({
   refTask: { type: Schema.Types.ObjectId, required: true, ref: "Task" },
   refWorker: { type: Schema.Types.ObjectId, required: true, ref: "User" },
   refEmployer: { type: Schema.Types.ObjectId, required: true, ref: "User" },
@@ -11,4 +11,4 @@ var WorkerReview = new Schema({
   timestamp: { type: Date, required: true },
 });
 
-module.exports = mongoose.model("WorkerReview", WorkerReview);
+module.exports = mongoose.model("FinancialProfile", FinancialProfile);

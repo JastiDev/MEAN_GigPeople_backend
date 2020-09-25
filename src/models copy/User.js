@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
 var User = new Schema({
-  createdAt: { type: Date, required: true },
+  createdAt: { type: Date, required: true, default: new Date() },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   firstName: { type: String, required: true },
@@ -10,17 +10,14 @@ var User = new Schema({
   country: { type: String, required: true },
   refWorkerProfile: {
     type: Schema.Types.ObjectId,
-    required: true,
     ref: "WorkerProfile",
   },
   refEmployerProfile: {
     type: Schema.Types.ObjectId,
-    required: true,
     ref: "EmployerProfile",
   },
   refFinancialProfile: {
     type: Schema.Types.ObjectId,
-    required: true,
     ref: "FinancialProfile",
   },
 }); 

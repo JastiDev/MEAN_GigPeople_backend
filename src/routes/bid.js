@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const checkAuth = require("../middleware/check-auth");
-const Bid = require("../models/bid");
+const Bid = require("../models/Bid");
 
 router.post("", checkAuth, async (req, res, next) => { 
   let {bidData} = req.body;

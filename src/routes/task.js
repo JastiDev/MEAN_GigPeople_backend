@@ -4,7 +4,7 @@ const multer = require("multer");
 const router = express.Router();
 
 const checkAuth = require("../middleware/check-auth");
-const Task = require("../models/task");
+const Task = require("../models/Task");
 
 
 const MIME_TYPE_MAP = {

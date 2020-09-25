@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const User = require("../models/user");
+const User = require("../models/User");
 
 const router = express.Router();
 
@@ -12,6 +12,9 @@ router.post('/signup', function (req, res, next) {
     const user = new User({
       email: req.body.email,
       password: hash,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      country: req.body.country
     });
 
     user
