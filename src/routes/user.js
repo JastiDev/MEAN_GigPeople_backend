@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const User = require("../models/User");
+const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
 
@@ -36,11 +37,7 @@ router.post("/login", (req, res, next) => {
   let fetchedUser;
   User.findOne({ email: req.body.email })
     .then((user) => {
-      if (!user) {
-        return res.status(401).json({
-          message: "Auth failed",
-        });
-      }
+      if (!user) return false
       fetchedUser = user;
       return bcrypt.compare(req.body.password, user.password);
     })
@@ -65,6 +62,16 @@ router.post("/login", (req, res, next) => {
         message: "Auth failed",
       });
     });
+});
+
+router.get("/me", checkAuth, async (req, res, next) => { 
+  try { 
+    const me = await User.findById(req.userData.userId);
+    res.status(200).json(me);
+  } catch (err) { 
+    console.log(err);
+    res.status(404).json({ message: "You are not verified as you." });
+  }
 });
 
 module.exports = router;
