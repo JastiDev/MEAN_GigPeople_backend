@@ -4,15 +4,16 @@ var Schema = mongoose.Schema;
 var Task = new Schema({
   refCreator: { type: Schema.Types.ObjectId, required: true, ref: "User" },
   refCategory: { type: Schema.Types.ObjectId, required: true, ref: "Category" },
+  refSkills: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
   title: { type: String, required: true },
   description: { type: String, required: true },
-  filePath: { type: String, required: true },
-  country: { type: String, required: true },
-  minBudget: { type: Number, required: true },
-  maxBudget: { type: Number, required: true },
-  isHourly: { type: Boolean, required: true },
-  refBids: [{ type: Schema.Types.ObjectId, required: true, ref: "Bid" }],
-  status: { type: Number, required: true },
-  timestamp: { type: Date, required: true },
-}); 
+  filePath: { type: String },
+  country: { type: String },
+  minBudget: { type: Number },
+  maxBudget: { type: Number },
+  isHourly: { type: Boolean },
+  refBids: [{ type: Schema.Types.ObjectId, ref: "Bid" }],
+  status: { type: Number },
+  timestamp: { type: Date },
+});
 module.exports = mongoose.model("Task", Task);

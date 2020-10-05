@@ -1,14 +1,8 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var FinancialProfile = new Schema({
-  refTask: { type: Schema.Types.ObjectId, required: true, ref: "Task" },
-  refWorker: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-  refEmployer: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-  starOnTime: { type: Number, required: true },
-  starOnBudget: { type: Number, required: true },
-  star: { type: Number, required: true },
-  description: { type: String, required: true },
-  timestamp: { type: Date, required: true },
+  balance: { type: Number, required: true },
+  refTransactions: [{type: Schema.Types.ObjectId, ref: "Transaction"}],
 });
 
 module.exports = mongoose.model("FinancialProfile", FinancialProfile);

@@ -8,6 +8,7 @@ var User = new Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   country: { type: String, required: true },
+  avatar: { type: String },
   refWorkerProfile: {
     type: Schema.Types.ObjectId,
     ref: "WorkerProfile",
