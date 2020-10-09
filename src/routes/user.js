@@ -5,6 +5,7 @@ const checkAuth = require("../middleware/check-auth");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require("multer");
+var multerGoogleStorage = require("multer-google-storage");
 
 const User = require("../models/User");
 const WorkerProfile = require("../models/WorkerProfile");
@@ -17,23 +18,6 @@ const MIME_TYPE_MAP = {
   "image/jpg": "jpg",
   "application/pdf": "pdf",
 };
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const isValid = MIME_TYPE_MAP[file.mimetype];
-    let error = new Error("Invalid mime type");
-    if (isValid) {
-      error = null;
-    }
-    cb(error, "public/userfiles/avatar");
-  },
-  filename: (req, file, cb) => {
-    const name = file.originalname.toLowerCase().split(" ").join("-");
-
-    const ext = MIME_TYPE_MAP[file.mimetype];
-    cb(null, name + "-" + Date.now() + "." + ext);
-  },
-});
 
 /* GET users listing. */
 router.post('/signup', async (req, res, next) => {
@@ -122,7 +106,7 @@ router.post("/login", (req, res, next) => {
       );
       res.status(200).json({
         token: token,
-        expiresIn: 3600,
+        expiresIn: 10*3600,
       });
     })
     .catch((err) => {
@@ -142,21 +126,53 @@ router.get("/me", checkAuth, async (req, res, next) => {
   }
 });
 
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     const isValid = MIME_TYPE_MAP[file.mimetype];
+//     let error = new Error("Invalid mime type");
+//     if (isValid) {
+//       error = null;
+//     }
+//     cb(error, "public/userfiles/avatar");
+//   },
+//   filename: (req, file, cb) => {
+//     const name = file.originalname.toLowerCase().split(" ").join("-");
+
+//     const ext = MIME_TYPE_MAP[file.mimetype];
+//     cb(null, name + "-" + Date.now() + "." + ext);
+//   },
+// });
+
+
+const storage = multerGoogleStorage.storageEngine({
+  bucket: process.env.GCS_BUCKET,
+  projectId: process.env.GCLOUD_PROJECT,
+  keyFilename: process.env.GCS_KEYFILE,
+  filename: (req, file, cb) => {
+    const name = file.originalname.toLowerCase().split(" ").join("-").split("@").join("-");
+    const ext = MIME_TYPE_MAP[file.mimetype];
+    cb(null, name + "-" + Date.now() + "." + ext);
+  },
+  autoRetry: true,
+  maxRetries: 3
+});
+
 router.put(
   "/me",
   checkAuth,
   multer({ storage: storage }).single("myfile"),
   async (req, res, next) => {
     try {
-      const url = req.protocol + "://" + req.get("host");
+      console.log(req.file);
+      // const url = req.protocol + "://" + req.get("host");
 
       let me = await User.findById(req.userData.userId);
       me.firstName = req.body.firstName;
       me.lastName = req.body.lastName;
       me.email = req.body.email;
       me.country = req.body.country;
-      me.avatar = url + "/userfiles/avatar/" + req.file.filename;
-
+      // me.avatar = url + "/userfiles/avatar/" + req.file.filename;
+      me.avatar = req.file.path;
       await me.save();
       res.status(200).json(me);
     } catch (err) {

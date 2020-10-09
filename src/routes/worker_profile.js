@@ -27,7 +27,8 @@ router.put("/me", checkAuth, async (req, res, next) => {
     me.hourlyRate = req.body.hourlyRate;
     me.title = req.body.title;
     me.description = req.body.description;
-
+    me.refSkills = req.body.refSkills;
+    
     await me.save();
     res.status(200).json(me);
   } catch (err) {

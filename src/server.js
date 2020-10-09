@@ -33,7 +33,7 @@ const run = async () => {
   app.use(cors());
   app.use(logger("dev"));
 
-  app.use(express.static("public"));
+  app.use(express.static('public'));
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));

@@ -1,74 +1,110 @@
 const express = require("express");
-const multer = require("multer");
-
 const router = express.Router();
 
 const checkAuth = require("../middleware/check-auth");
 const Task = require("../models/Task");
 
-
-const MIME_TYPE_MAP = {
-  "image/png": "png",
-  "image/jpeg": "jpg",
-  "image/jpg": "jpg",
-  "application/pdf": "pdf"
-};
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const isValid = MIME_TYPE_MAP[file.mimetype];
-    let error = new Error("Invalid mime type");
-    if (isValid) {
-      error = null;
-    }
-    cb(error, "public/userfiles");
-  },
-  filename: (req, file, cb) => {
-    const name = file.originalname.toLowerCase().split(" ").join("-");
-    
-    const ext = MIME_TYPE_MAP[file.mimetype];
-    cb(null, name + "-" + Date.now() + "." + ext);
-  },
-});
-
 router.post(
   "",
   checkAuth,
-  multer({ storage: storage }).single("myfile"),
-  (req, res, next) => {
-    const url = req.protocol + "://" + req.get("host");
+  async (req, res, next) => {
+    try { 
+      const task = new Task({
+        refCreator: req.userData.userId,
+        ...req.body,
+        // title: req.body.title,
+        // description: req.body.description,
+        // refCategory: req.body.refCategory,
+        // country: req.body.country,
+        // minBudget: req.body.minBudget,
+        // maxBudget: req.body.maxBudget,
+        // refSkills: req.body.refSkills,
+        // isHourly: req.body.isHourly,
+        // filePath: req.body.filePath,
+      });
 
-    const taskData = JSON.parse(req.body.taskData);
-    delete taskData._id;
-    taskData.filePath = url + "/userfiles/" + req.file.filename;
-    taskData.creatorId = req.userData.userId;
-    
-    const task = new Task(taskData);
-
-    task.save().then(createdTask => {
-      res.status(201).json({task: createdTask});
-    });
-
+      const createdTask = await task.save();
+      res.status(201).json({ task: createdTask });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Internal Error" });
+    }
   }
 );
 
+router.put("", checkAuth, async (req, res, next) => {
+  try {
+    const task = await Task.findById(req.body._id);
+    if (!task) return res.status(404).json({ message: "Task not found!" });
+
+    task.title = req.body.title;
+    task.description = req.body.description;
+    task.refCategory = req.body.refCategory;
+    task.country = req.body.country;
+    task.minBudget = req.body.minBudget;
+    task.maxBudget = req.body.maxBudget;
+    task.refSkills = req.body.refSkills;
+    task.isHourly = req.body.isHourly;
+    task.filePath = req.body.filePath;
+
+    const createdTask = await task.save();
+    res.status(200).json({ task: createdTask });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal Error" });
+  }
+});
+
 router.get("/:id", (req, res, next) => {
-  Task.findById(req.params.id).then(task => {
-    if (task) {
-      res.status(200).json(task);
-    } else {
-      res.status(404).json({ message: "Post not found!" });
-    }
-  });
+  Task
+    .findById(req.params.id)
+    .then(task => {
+      if (task) {
+        res.status(200).json(task);
+      } else {
+        res.status(404).json({ message: "Task not found!" });
+      }
+    });
 });
 
 router.post("/readbyfilter", (req, res, next) => { 
-  Task.find().then(tasks => {
-    res.status(200).json(tasks);
-  }).catch(err => { 
-    console.log(err);
-    res.status(500).json({ message: "Server Internel Error!" });
-  });
+  Task.find()
+    .populate("refCategory")
+    .populate("refSkills")
+    .then((tasks) => {
+      res.status(200).json(tasks);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ message: "Internel Error!" });
+    });
+});
+
+
+router.post("/readOneWithRefs", (req, res, next) => { 
+  if (
+    req.body.refs.indexOf("refCreator") > -1 &&
+    req.body.refs.indexOf("refSkills") > -1 &&
+    req.body.refs.indexOf("refBids") > -1 &&
+    req.body.refs.length === 3
+  ) {
+    Task.findById(req.body.id)
+      .populate("refCreator")
+      .populate("refSkills")
+      .populate("refBids")
+      .then((task) => {
+        if (!task) return res.status(404).json({ message: "Not found" });
+        return res.status(200).json(task);
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json({ message: "Internel Error!" });
+      });
+  } else {
+    return res.status(400).json({ message: "Bad Request" });
+  }
+
+  
 });
 
 module.exports = router;

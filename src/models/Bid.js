@@ -6,7 +6,7 @@ var Bid = new Schema({
   description: { type: String, required: true },
   budget: { type: Number, required: true },
   duration: { type: Number, required: true },
-  timestamp: { type: Date, required: true },
+  timestamp: { type: Date, required: true, default: new Date() },
 }); 
 
 module.exports = mongoose.model("Bid", Bid);
