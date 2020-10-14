@@ -116,11 +116,11 @@ router.post("/readOneWithRefs", async (req, res, next) => {
   }
 });
 
-router.post("/myTasks", checkAuth, async (req, res, next) => { 
+router.post("/readMyTasks", checkAuth, async (req, res, next) => { 
   const userId = req.userData.userId;
 
   try { 
-    const tasks = await Task.find({ refCreator: userId }).populate("refBids");
+    const tasks = await Task.find({ refCreator: userId, status: req.body.status }).populate("refBids");
     return res.status(200).json(tasks);
   } catch (err) {
     console.log(err);
@@ -134,6 +134,20 @@ router.post("/delete", checkAuth, async (req, res, next) => {
     await Bid.remove({ refTask: req.body.id });
     await Task.findByIdAndDelete(req.body.id);
     return res.status(200).json({ message: "Successfully removed" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internel Error!" });
+  }
+});
+
+router.post("/hire", checkAuth, async (req, res, next) => { 
+  const userId = req.userData.userId;
+  const { taskId, bidderId } = req.body;
+  try {
+    let task = await Task.findById(taskId);
+    task.status = 1;
+    await task.save();
+    return res.status(200).json(task);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Internel Error!" });

@@ -1,1 +1,5 @@
 runtime: nodejs12
+env_variables:
+  GCS_BUCKET: "gigpeople-1241e"
+  GCLOUD_PROJECT: "gig-backend-288811"
+  GCS_KEYFILE: "src/gig-backend-288811-7c97a636b44f.json"

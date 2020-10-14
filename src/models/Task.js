@@ -15,5 +15,6 @@ var Task = new Schema({
   refBids: [{ type: Schema.Types.ObjectId, ref: "Bid" }],
   status: { type: Number, required: true, default: 0 },
   timestamp: { type: Date, required: true, default: new Date() },
+  refContract: { type: Schema.Types.ObjectId, ref: 'Contract' }
 });
 module.exports = mongoose.model("Task", Task);
