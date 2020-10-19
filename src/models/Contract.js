@@ -16,11 +16,6 @@ var Contract = new Schema({
     required: true,
     ref: 'Task'
   },
-  refBid: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: 'Bid'
-  },
   budget: {
     type: Number,
     required: true

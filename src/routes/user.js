@@ -182,4 +182,15 @@ router.put(
   }
 );
 
+router.post("/getById", async (req, res, next) => { 
+  try {
+    let user = await User.findById(req.body.id);
+    if (!user) res.status(404).json({ message: "User Not Found" });
+    res.status(200).json(user);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal Error" });
+  }
+});
+
 module.exports = router;

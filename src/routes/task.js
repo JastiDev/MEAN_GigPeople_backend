@@ -88,24 +88,16 @@ router.post("/readOneWithRefs", async (req, res, next) => {
     if (
       req.body.refs.indexOf("refCreator") > -1 &&
       req.body.refs.indexOf("refSkills") > -1 &&
-      req.body.refs.indexOf("refBids") > -1 &&
+      req.body.refs.indexOf("refBids_refBidder") > -1 &&
       req.body.refs.length === 3
     ) {
       const task = await Task.findById(req.body.id)
         .populate("refCreator")
         .populate("refSkills")
-        .populate("refBids");
+        .populate({ path: 'refBids', populate: { path: 'refBidder' } });
       if (!task) return res.status(404).json({ message: "Not found" });
       return res.status(200).json(task);
-
-    } else if (
-      req.body.refs.length === 1 &&
-      req.body.refs.indexOf("refBids_refBidder") > -1
-    ) {
-      const task = await Task.findById(req.body.id)
-        .populate({ path: 'refBids', populate: { path: 'refBidder' } });     
-      if (!task) return res.status(404).json({ message: "Not found" });
-      return res.status(200).json(task);
+      
     } else {
       return res.status(400).json({ message: "Bad Request" });
     }
