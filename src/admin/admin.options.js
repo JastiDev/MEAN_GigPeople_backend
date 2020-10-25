@@ -17,6 +17,7 @@ const resources = [
   require('../models/Task'),
   require('../models/Transaction'),
   require('../models/WorkerReview'),
+  require('../models/Contract')
 ];
 
 const options = {

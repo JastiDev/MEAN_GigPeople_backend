@@ -13,8 +13,7 @@ var Task = new Schema({
   maxBudget: { type: Number },
   isHourly: { type: Boolean },
   refBids: [{ type: Schema.Types.ObjectId, ref: "Bid" }],
-  status: { type: Number, required: true, default: 0 },
+  refContract: { type: Schema.Types.ObjectId, ref: "Contract" },
   timestamp: { type: Date, required: true, default: new Date() },
-  refContract: { type: Schema.Types.ObjectId, ref: 'Contract' }
 });
 module.exports = mongoose.model("Task", Task);

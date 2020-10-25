@@ -25,7 +25,7 @@ const run = async () => {
         useFindAndModify: false,
       }
     );
-    console.log("DB Connected Successfully!")
+    console.log("DB Connected Successfully!");
   } catch (err) { 
     console.log("DB Connection Failed", err);
   }

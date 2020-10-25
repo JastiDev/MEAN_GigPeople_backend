@@ -7,6 +7,6 @@ var Bid = new Schema({
   budget: { type: Number, required: true },
   duration: { type: Number, required: true },
   timestamp: { type: Date, required: true, default: new Date() },
-}); 
+});
 
 module.exports = mongoose.model("Bid", Bid);
