@@ -9,7 +9,7 @@ var WorkerReview = new Schema({
   starOnBudget: { type: Number, required: true },
   star: { type: Number, required: true },
   description: { type: String, required: true },
-  timestamp: { type: Date, required: true },
+  timestamp: { type: Number, required: true, default: Date.now() },
 });
 
 module.exports = mongoose.model("WorkerReview", WorkerReview);

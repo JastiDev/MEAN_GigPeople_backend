@@ -9,7 +9,7 @@ module.exports = {
   Contract_Status: {
     INTERVIEW: 0,
     STARTED: 1,
-    FINISHED: 2,
+    RELEASED: 2,
     CANCELED: 3,
   },
 };

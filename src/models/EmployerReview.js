@@ -7,6 +7,6 @@ var EmployerReview = new Schema({
   refEmployer: { type: Schema.Types.ObjectId, required: true, ref: "User" },
   star: { type: Number, required: true },
   description: { type: String, required: true },
-  timestamp: { type: Date, required: true },
+  timestamp: { type: Number, required: true, default: Date.now() },
 }); 
 module.exports = mongoose.model("EmployerReview", EmployerReview);
