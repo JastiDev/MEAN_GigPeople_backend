@@ -21,6 +21,25 @@ router.get('', async (req, res, next) => {
   }
 });
 
+router.post("/readMyContracts", checkAuth, async (req, res, next)=> {
+  const userId = req.userData.userId;
+  const { isEmployer, status } = req.body;
+
+  try {
+    let arr=[];
+    if (isEmployer) {
+      arr = await Contract.find({ refEmployer: userId, status: status }).populate("refTask").populate("refEmployer").populate("refWorker");
+    } else {
+      arr = await Contract.find({ refWorker: userId, status: status }).populate("refTask").populate("refEmployer").populate("refWorker");
+    }
+    return res.status(200).json(arr);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal Error" });
+  }
+
+});
+
 router.post("/awardBid", checkAuth, async (req, res, next) => {
   const userId = req.userData.userId;
   const { taskId, bidId, workerId, employerId } = req.body;
@@ -129,5 +148,7 @@ router.post("/release", checkAuth, async (req, res, next) => {
     return res.status(500).json({ message: "Internel Error!" });
   }
 });
+
+
 
 module.exports = router;
